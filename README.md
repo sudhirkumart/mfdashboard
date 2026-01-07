@@ -1,6 +1,52 @@
 # MF Dashboard - Mutual Fund Portfolio Tracker
 
-A comprehensive mutual fund portfolio management system with support for NAV fetching, XIRR calculations, capital gains analysis, Excel export, Google Sheets integration, and an interactive web dashboard.
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/sudhirkumart/mfdashboard/graphs/commit-activity)
+
+A comprehensive mutual fund portfolio management system built for Indian investors. Track your MF investments with real-time NAV updates, advanced financial calculations (XIRR, CAGR), capital gains analysis, Excel/CSV export, Google Sheets integration, and an interactive web dashboard.
+
+## Highlights
+
+- **Real-time NAV Data**: Automatic fetching from MFAPI.in with intelligent caching
+- **Advanced Analytics**: XIRR, CAGR, absolute returns, and capital gains (LTCG/STCG)
+- **Multi-Format Support**: Excel export, CSV import/export, CAS PDF parsing
+- **Web Dashboard**: Interactive charts and portfolio visualization
+- **Google Sheets Integration**: Custom functions for spreadsheets
+- **Multi-PAN Support**: Manage portfolios across multiple accounts
+
+## Table of Contents
+
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage Examples](#usage-examples)
+  - [NAV Fetching](#nav-fetching)
+  - [Financial Calculations](#financial-calculations)
+  - [Portfolio Management](#portfolio-management)
+  - [CAS Parsing](#cas-parsing)
+- [Google Sheets Integration](#google-sheets-integration)
+- [Web Dashboard](#web-dashboard)
+- [Configuration](#configuration)
+- [Documentation](#documentation)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Disclaimer](#disclaimer)
+
+## Demo
+
+```bash
+# Quick demo to see all features in action
+python quickstart.py
+```
+
+This will demonstrate:
+- Real-time NAV fetching
+- Portfolio calculations (XIRR, returns, capital gains)
+- Excel export with formatted reports
+- Dashboard setup
+- Google Sheets integration guide
 
 ## Features
 
@@ -254,6 +300,21 @@ LTCG_EXEMPTION_EQUITY = 100000        # ₹1 lakh LTCG exemption
 EXCEL_EXPORT_DIR = "data/output"      # Export directory
 ```
 
+## Documentation
+
+Comprehensive guides are available for all features:
+
+- **[Getting Started Guide](GETTING_STARTED.md)** - Step-by-step setup and first steps
+- **[Import Guide](IMPORT_GUIDE.md)** - CSV/Excel data import instructions
+- **[Excel Import Guide](EXCEL_IMPORT_GUIDE.md)** - Import from Excel files
+- **[CSV Export Guide](CSV_EXPORT_GUIDE.md)** - Export portfolio to CSV
+- **[Import Modes Guide](IMPORT_MODES_GUIDE.md)** - Replace vs merge import modes
+- **[Edit/Delete/Filter Guide](EDIT_DELETE_FILTER_GUIDE.md)** - Managing portfolio data
+- **[Quick Fix Guide](QUICK_FIX_GUIDE.md)** - Common issues and solutions
+- **[Troubleshooting Import](TROUBLESHOOTING_IMPORT.md)** - Import error resolution
+- **[Architecture](ARCHITECTURE.md)** - System design and technical details
+- **[Project Summary](PROJECT_SUMMARY.md)** - Overview and capabilities
+
 ## Finding Scheme Codes
 
 ### Method 1: MFAPI.in Website
@@ -383,7 +444,16 @@ This project is open source. Feel free to use, modify, and distribute as needed.
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: January 2024
+## Support
 
-Made with care for Indian mutual fund investors
+For issues, questions, or contributions:
+- **Issues**: [GitHub Issues](https://github.com/sudhirkumart/mfdashboard/issues)
+- **Repository**: [https://github.com/sudhirkumart/mfdashboard](https://github.com/sudhirkumart/mfdashboard)
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: January 2026
+**Repository**: [sudhirkumart/mfdashboard](https://github.com/sudhirkumart/mfdashboard)
+
+Made with care for Indian mutual fund investors 🇮🇳
