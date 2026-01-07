@@ -1,0 +1,4 @@
+PAN,Account Name,Scheme Code,Scheme Name,Folio,Category,Units,Average Buy Price,Invested Amount,Current NAV,Current Value,Gain/Loss,Return %,NAV Date
+AAAAA1111A,Test User,119551,HDFC Top 100 Fund - Direct Plan - Growth,12345678,Equity - Large Cap,100.5,650.00,65325.00,720.50,72410.25,7085.25,10.85,03-01-2024
+AAAAA1111A,Test User,118989,Axis Bluechip Fund - Direct Plan - Growth,87654321,Equity - Large Cap,250.0,42.50,10625.00,48.25,12062.50,1437.50,13.53,03-01-2024
+BBBBB2222B,Another User,120503,SBI Small Cap Fund - Direct Plan - Growth,99887766,Equity - Small Cap,80.0,62.10,4968.00,95.80,7664.00,2696.00,54.27,03-01-2024

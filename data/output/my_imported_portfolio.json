@@ -1,0 +1,200 @@
+{
+  "portfolio_name": "Imported Portfolio - 2026-01-06",
+  "created_date": "2026-01-06T22:15:35.756299",
+  "accounts": {
+    "ABCDE1234F": {
+      "name": "Imported Account",
+      "email": "",
+      "holdings": [
+        {
+          "scheme_code": "119551",
+          "scheme_name": "HDFC Top 100 Fund - Direct Plan - Growth",
+          "folio": "12345678",
+          "category": "Equity - Large Cap",
+          "units": 150.525,
+          "invested": 100091.25,
+          "current_nav": 720.5,
+          "current_value": 108453.13,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2023-01-15",
+              "scheme_code": "119551",
+              "scheme_name": "HDFC Top 100 Fund - Direct Plan - Growth",
+              "folio": "12345678",
+              "type": "purchase",
+              "units": 75.525,
+              "nav": 650.0,
+              "amount": 49091.25
+            },
+            {
+              "date": "2023-06-20",
+              "scheme_code": "119551",
+              "scheme_name": "HDFC Top 100 Fund - Direct Plan - Growth",
+              "folio": "12345678",
+              "type": "purchase",
+              "units": 75.0,
+              "nav": 680.0,
+              "amount": 51000.0
+            }
+          ]
+        },
+        {
+          "scheme_code": "118989",
+          "scheme_name": "Axis Bluechip Fund - Direct Plan - Growth",
+          "folio": "87654321",
+          "category": "Equity - Large Cap",
+          "units": 350.15,
+          "invested": 15256.38,
+          "current_nav": 48.25,
+          "current_value": 16894.74,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2022-12-10",
+              "scheme_code": "118989",
+              "scheme_name": "Axis Bluechip Fund - Direct Plan - Growth",
+              "folio": "87654321",
+              "type": "purchase",
+              "units": 200.15,
+              "nav": 42.5,
+              "amount": 8506.38
+            },
+            {
+              "date": "2023-08-15",
+              "scheme_code": "118989",
+              "scheme_name": "Axis Bluechip Fund - Direct Plan - Growth",
+              "folio": "87654321",
+              "type": "purchase",
+              "units": 150.0,
+              "nav": 45.0,
+              "amount": 6750.0
+            }
+          ]
+        },
+        {
+          "scheme_code": "120503",
+          "scheme_name": "SBI Small Cap Fund - Direct Plan - Growth",
+          "folio": "11223344",
+          "category": "Equity - Small Cap",
+          "units": 120.75,
+          "invested": 7498.58,
+          "current_nav": 95.8,
+          "current_value": 11567.85,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2023-03-01",
+              "scheme_code": "120503",
+              "scheme_name": "SBI Small Cap Fund - Direct Plan - Growth",
+              "folio": "11223344",
+              "type": "purchase",
+              "units": 120.75,
+              "nav": 62.1,
+              "amount": 7498.57
+            }
+          ]
+        },
+        {
+          "scheme_code": "119183",
+          "scheme_name": "SBI Liquid Fund - Direct Plan - Growth",
+          "folio": "55667788",
+          "category": "Debt - Liquid",
+          "units": 1500.0,
+          "invested": 499500.0,
+          "current_nav": 341.25,
+          "current_value": 511875.0,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2023-01-05",
+              "scheme_code": "119183",
+              "scheme_name": "SBI Liquid Fund - Direct Plan - Growth",
+              "folio": "55667788",
+              "type": "purchase",
+              "units": 1500.0,
+              "nav": 333.0,
+              "amount": 499500.0
+            }
+          ]
+        },
+        {
+          "scheme_code": "122639",
+          "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+          "folio": "99887766",
+          "category": "Equity - Flexi Cap",
+          "units": 600.0,
+          "invested": 26500.0,
+          "current_nav": 53.75,
+          "current_value": 32250.0,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2022-11-20",
+              "scheme_code": "122639",
+              "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+              "folio": "99887766",
+              "type": "purchase",
+              "units": 250.0,
+              "nav": 40.0,
+              "amount": 10000.0
+            },
+            {
+              "date": "2023-05-10",
+              "scheme_code": "122639",
+              "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+              "folio": "99887766",
+              "type": "purchase",
+              "units": 200.0,
+              "nav": 45.0,
+              "amount": 9000.0
+            },
+            {
+              "date": "2023-09-15",
+              "scheme_code": "122639",
+              "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+              "folio": "99887766",
+              "type": "purchase",
+              "units": 150.0,
+              "nav": 50.0,
+              "amount": 7500.0
+            }
+          ]
+        },
+        {
+          "scheme_code": "103009",
+          "scheme_name": "HDFC Hybrid Equity Fund - Direct Plan - Growth",
+          "folio": "44556677",
+          "category": "Hybrid - Aggressive",
+          "units": 340.5,
+          "invested": 19297.75,
+          "current_nav": 62.3,
+          "current_value": 21213.15,
+          "nav_date": "03-01-2024",
+          "transactions": [
+            {
+              "date": "2023-02-10",
+              "scheme_code": "103009",
+              "scheme_name": "HDFC Hybrid Equity Fund - Direct Plan - Growth",
+              "folio": "44556677",
+              "type": "purchase",
+              "units": 180.5,
+              "nav": 55.5,
+              "amount": 10017.75
+            },
+            {
+              "date": "2023-07-25",
+              "scheme_code": "103009",
+              "scheme_name": "HDFC Hybrid Equity Fund - Direct Plan - Growth",
+              "folio": "44556677",
+              "type": "purchase",
+              "units": 160.0,
+              "nav": 58.0,
+              "amount": 9280.0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

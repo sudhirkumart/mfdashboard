@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python example_usage.py:*)",
+      "Bash(pip install:*)",
+      "Bash(python web_app.py:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(mkdir:*)",
+      "Bash(git init:*)",
+      "Bash(git remote:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

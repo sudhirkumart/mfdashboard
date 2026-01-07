@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutual Fund Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> MF Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-success" id="importBtn">
+                        <i class="fas fa-upload"></i> Import
+                    </button>
+                    <button class="btn btn-primary" id="exportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Summary Cards -->
+            <section class="summary-section">
+                <div class="card summary-card">
+                    <div class="card-icon blue">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Invested</h3>
+                        <p class="amount" id="totalInvested">₹0.00</p>
+                    </div>
+                </div>
+
+                <div class="card summary-card">
+                    <div class="card-icon green">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Current Value</h3>
+                        <p class="amount" id="currentValue">₹0.00</p>
+                    </div>
+                </div>
+
+                <div class="card summary-card">
+                    <div class="card-icon orange">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Total Gain/Loss</h3>
+                        <p class="amount" id="totalGain">₹0.00</p>
+                        <p class="percentage" id="gainPercentage">0.00%</p>
+                    </div>
+                </div>
+
+                <div class="card summary-card">
+                    <div class="card-icon purple">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>XIRR</h3>
+                        <p class="amount" id="xirr">0.00%</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Portfolio Allocation</h2>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Performance Trend</h2>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Holdings Table -->
+            <section class="holdings-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Holdings</h2>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search holdings...">
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div style="padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <label for="panFilter" style="margin-right: 8px; font-weight: 500;">
+                                <i class="fas fa-user"></i> PAN:
+                            </label>
+                            <select id="panFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); min-width: 150px;">
+                                <option value="">All Accounts</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="categoryFilter" style="margin-right: 8px; font-weight: 500;">
+                                <i class="fas fa-filter"></i> Category:
+                            </label>
+                            <select id="categoryFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); min-width: 120px;">
+                                <option value="">All Categories</option>
+                                <option value="Equity">Equity</option>
+                                <option value="Debt">Debt</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Liquid">Liquid</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <button id="clearFilters" class="btn" style="margin-left: auto; padding: 8px 16px;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="holdings-table" id="holdingsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Scheme Name</th>
+                                        <th>Folio</th>
+                                        <th>Units</th>
+                                        <th>Avg Price</th>
+                                        <th>Invested</th>
+                                        <th>Current NAV</th>
+                                        <th>Current Value</th>
+                                        <th>Gain/Loss</th>
+                                        <th>Return %</th>
+                                        <th style="width: 100px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="holdingsTableBody">
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <div class="loading">
+                                                <i class="fas fa-spinner fa-spin"></i> Loading holdings...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAN Accounts -->
+            <section class="accounts-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>PAN Accounts</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="accounts-grid" id="accountsGrid">
+                            <!-- Accounts will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 MF Dashboard | Data from <a href="https://www.mfapi.in" target="_blank">MFAPI.in</a></p>
+        </div>
+    </footer>
+
+    <!-- Modal for Export Options -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Export Portfolio</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-block" id="exportExcelBtn">
+                    <i class="fas fa-file-excel"></i> Export to Excel
+                </button>
+                <button class="btn btn-block" id="exportCsvBtn">
+                    <i class="fas fa-file-csv"></i> Export to CSV
+                </button>
+                <button class="btn btn-block" id="exportJsonBtn">
+                    <i class="fas fa-file-code"></i> Export to JSON
+                </button>
+                <button class="btn btn-block" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Export to PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Edit Holding -->
+    <div id="editModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Edit Holding</h2>
+                <span class="close-edit">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editHoldingForm" style="display: grid; gap: 15px;">
+                    <input type="hidden" id="editPan">
+                    <input type="hidden" id="editIndex">
+
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Scheme Name:</label>
+                        <input type="text" id="editSchemeName" readonly style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: #f5f5f5;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Units:</label>
+                            <input type="number" id="editUnits" step="0.001" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Invested Amount:</label>
+                            <input type="number" id="editInvested" step="0.01" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Current NAV:</label>
+                            <input type="number" id="editCurrentNav" step="0.01" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Current Value:</label>
+                            <input type="number" id="editCurrentValue" step="0.01" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Category:</label>
+                            <select id="editCategory" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                                <option value="">Not Specified</option>
+                                <option value="Equity">Equity</option>
+                                <option value="Debt">Debt</option>
+                                <option value="Hybrid">Hybrid</option>
+                                <option value="Liquid">Liquid</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Folio:</label>
+                            <input type="text" id="editFolio" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button type="submit" class="btn" style="flex: 1; background: var(--primary-color); color: white;">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn close-edit" style="flex: 1; background: var(--secondary-color);">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Import Options -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Portfolio</h2>
+                <span class="close-import">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="import-description">
+                    <i class="fas fa-info-circle"></i>
+                    Import your portfolio data from CSV, Excel, or JSON files
+                </p>
+
+                <!-- Import Mode Selection -->
+                <div class="import-mode-selection">
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold;">
+                        <i class="fas fa-cog"></i> Import Mode:
+                    </label>
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="importMode" value="replace" checked style="margin-right: 8px;">
+                            <span><strong>Replace All</strong> - Clear existing data and import fresh</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="importMode" value="merge" style="margin-right: 8px;">
+                            <span><strong>Merge/Update</strong> - Add to existing data or update holdings</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="file-upload-area" id="fileUploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Drag & drop files here or click to browse</p>
+                    <p class="file-types">Supported: CSV, Excel (.xlsx), JSON</p>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" multiple hidden>
+                </div>
+
+                <div class="import-buttons">
+                    <button class="btn btn-block" id="importCsvBtn">
+                        <i class="fas fa-file-csv"></i> Import from CSV
+                    </button>
+                    <button class="btn btn-block" id="importExcelBtn">
+                        <i class="fas fa-file-excel"></i> Import from Excel
+                    </button>
+                    <button class="btn btn-block" id="importJsonBtn">
+                        <i class="fas fa-file-code"></i> Import from JSON
+                    </button>
+                </div>
+
+                <div id="importStatus" class="import-status hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Include SheetJS for Excel parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Include Dashboard Script -->
+    <script src="app.js"></script>
+</body>
+</html>

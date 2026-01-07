@@ -1,0 +1,204 @@
+{
+  "portfolio_name": "Sample Portfolio",
+  "created_date": "2024-01-01T00:00:00",
+  "last_updated": "2024-01-03T10:30:00",
+  "accounts": {
+    "ABCDE1234F": {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "mobile": "+91-9876543210",
+      "holdings": [
+        {
+          "scheme_code": "119551",
+          "scheme_name": "HDFC Top 100 Fund - Direct Plan - Growth",
+          "folio": "12345678",
+          "category": "Equity - Large Cap",
+          "transactions": [
+            {
+              "date": "2023-01-15",
+              "type": "purchase",
+              "units": 75.525,
+              "nav": 650.00,
+              "amount": 49091.25
+            },
+            {
+              "date": "2023-06-20",
+              "type": "purchase",
+              "units": 75.000,
+              "nav": 680.00,
+              "amount": 51000.00
+            }
+          ],
+          "units": 150.525,
+          "invested": 100091.25,
+          "current_nav": 720.50,
+          "current_value": 108453.13,
+          "gain_loss": 8361.88,
+          "return_pct": 8.35,
+          "nav_date": "03-01-2024"
+        },
+        {
+          "scheme_code": "118989",
+          "scheme_name": "Axis Bluechip Fund - Direct Plan - Growth",
+          "folio": "87654321",
+          "category": "Equity - Large Cap",
+          "transactions": [
+            {
+              "date": "2022-12-10",
+              "type": "purchase",
+              "units": 200.150,
+              "nav": 42.50,
+              "amount": 8506.38
+            },
+            {
+              "date": "2023-08-15",
+              "type": "purchase",
+              "units": 150.000,
+              "nav": 45.00,
+              "amount": 6750.00
+            }
+          ],
+          "units": 350.150,
+          "invested": 15256.38,
+          "current_nav": 48.25,
+          "current_value": 16894.74,
+          "gain_loss": 1638.36,
+          "return_pct": 10.74,
+          "nav_date": "03-01-2024"
+        },
+        {
+          "scheme_code": "120503",
+          "scheme_name": "SBI Small Cap Fund - Direct Plan - Growth",
+          "folio": "11223344",
+          "category": "Equity - Small Cap",
+          "transactions": [
+            {
+              "date": "2023-03-01",
+              "type": "purchase",
+              "units": 120.750,
+              "nav": 62.10,
+              "amount": 7498.58
+            }
+          ],
+          "units": 120.750,
+          "invested": 7498.58,
+          "current_nav": 95.80,
+          "current_value": 11567.85,
+          "gain_loss": 4069.27,
+          "return_pct": 54.27,
+          "nav_date": "03-01-2024"
+        },
+        {
+          "scheme_code": "119183",
+          "scheme_name": "SBI Liquid Fund - Direct Plan - Growth",
+          "folio": "55667788",
+          "category": "Debt - Liquid",
+          "transactions": [
+            {
+              "date": "2023-01-05",
+              "type": "purchase",
+              "units": 1500.000,
+              "nav": 333.00,
+              "amount": 499500.00
+            }
+          ],
+          "units": 1500.000,
+          "invested": 499500.00,
+          "current_nav": 341.25,
+          "current_value": 511875.00,
+          "gain_loss": 12375.00,
+          "return_pct": 2.48,
+          "nav_date": "03-01-2024"
+        }
+      ]
+    },
+    "XYZAB5678C": {
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "mobile": "+91-9123456780",
+      "holdings": [
+        {
+          "scheme_code": "122639",
+          "scheme_name": "Parag Parikh Flexi Cap Fund - Direct Plan - Growth",
+          "folio": "99887766",
+          "category": "Equity - Flexi Cap",
+          "transactions": [
+            {
+              "date": "2022-11-20",
+              "type": "purchase",
+              "units": 250.000,
+              "nav": 40.00,
+              "amount": 10000.00
+            },
+            {
+              "date": "2023-05-10",
+              "type": "purchase",
+              "units": 200.000,
+              "nav": 45.00,
+              "amount": 9000.00
+            },
+            {
+              "date": "2023-09-15",
+              "type": "purchase",
+              "units": 150.000,
+              "nav": 50.00,
+              "amount": 7500.00
+            }
+          ],
+          "units": 600.000,
+          "invested": 26500.00,
+          "current_nav": 53.75,
+          "current_value": 32250.00,
+          "gain_loss": 5750.00,
+          "return_pct": 21.70,
+          "nav_date": "03-01-2024"
+        },
+        {
+          "scheme_code": "103009",
+          "scheme_name": "HDFC Hybrid Equity Fund - Direct Plan - Growth",
+          "folio": "44556677",
+          "category": "Hybrid - Aggressive",
+          "transactions": [
+            {
+              "date": "2023-02-10",
+              "type": "purchase",
+              "units": 180.500,
+              "nav": 55.50,
+              "amount": 10017.75
+            },
+            {
+              "date": "2023-07-25",
+              "type": "purchase",
+              "units": 160.000,
+              "nav": 58.00,
+              "amount": 9280.00
+            }
+          ],
+          "units": 340.500,
+          "invested": 19297.75,
+          "current_nav": 62.30,
+          "current_value": 21213.15,
+          "gain_loss": 1915.40,
+          "return_pct": 9.93,
+          "nav_date": "03-01-2024"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_accounts": 2,
+    "total_holdings": 6,
+    "total_invested": 668144.96,
+    "current_value": 702253.87,
+    "total_gain": 34108.91,
+    "absolute_return_pct": 5.10,
+    "xirr": 12.35
+  },
+  "notes": [
+    "This is a sample portfolio file for demonstration purposes.",
+    "Replace with your actual mutual fund holdings.",
+    "You can add multiple PAN accounts under the 'accounts' section.",
+    "Each holding should have scheme_code, transactions, and current NAV data.",
+    "Use the quickstart.py script to populate with real data from MFAPI.in"
+  ]
+}

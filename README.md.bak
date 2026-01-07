@@ -1,0 +1,286 @@
+# MF Dashboard - Mutual Fund Portfolio Tracker
+
+A comprehensive mutual fund portfolio management system with support for NAV fetching, XIRR calculations, capital gains analysis, Excel export, Google Sheets integration, and an interactive web dashboard.
+
+## Features
+
+### Core Features
+- **Portfolio Management**: Track multiple mutual fund investments
+- **Capital Gains Calculator**: FIFO-based calculation with STCG/LTCG classification
+- **Auto NAV Fetching**: Automatic latest NAV updates from MFAPI.in
+- **Transaction Tracking**: Complete buy/sell transaction history
+- **Performance Caching**: 50-500x faster with intelligent file-based caching
+
+### User Interfaces
+- **CLI Application**: Full-featured terminal interface
+- **Web Dashboard**: Beautiful HTML dashboard with Chart.js
+- **Google Sheets**: Apps Script integration for spreadsheets
+
+### Analytics
+- **Portfolio Summary**: Total invested, current value, gains/loss
+- **Scheme-wise Analysis**: Individual holding performance
+- **Capital Gains Report**: Detailed STCG/LTCG breakdown
+- **Visual Charts**: Portfolio distribution pie charts
+
+## Installation
+
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Import and use:
+```python
+from mfapi_fetcher import MFAPIFetcher
+
+fetcher = MFAPIFetcher()
+```
+
+## Quick Start
+
+### 1. CLI Application (Recommended for Beginners)
+```bash
+python portfolio_app.py
+```
+Interactive menu-driven interface for all portfolio operations.
+
+### 2. Web Dashboard
+```bash
+python web_app.py
+```
+Then open http://localhost:5000 in your browser for the visual dashboard.
+
+### 3. Python API
+```python
+from mfapi_fetcher import MFAPIFetcher
+from portfolio_manager import PortfolioManager
+
+# Initialize
+fetcher = MFAPIFetcher()
+portfolio = PortfolioManager()
+
+# Add transaction
+portfolio.add_transaction(
+    date='2025-01-01',
+    scheme_code='119551',
+    scheme_name='HDFC Equity Fund',
+    transaction_type='BUY',
+    units=100,
+    nav=50.25
+)
+
+# Get portfolio summary
+current_navs = {'119551': fetcher.get_latest_nav('119551')['nav']}
+summary = portfolio.get_summary(current_navs)
+print(f"Total Value: Rs.{summary['current_value']}")
+
+# Calculate capital gains
+gains = portfolio.calculate_capital_gains(is_equity=True)
+```
+
+### 4. Google Sheets Integration
+1. Open your Google Sheet
+2. Go to Extensions > Apps Script
+3. Copy code from `sheets_integration.js`
+4. Save and refresh - use the "MF Portfolio" menu
+
+## API Reference
+
+### Initialization
+
+```python
+fetcher = MFAPIFetcher(
+    cache_dir=".mfcache",  # Cache directory
+    cache_ttl=3600,        # Cache TTL in seconds (default: 1 hour)
+    timeout=10             # Request timeout in seconds
+)
+```
+
+### Main Methods
+
+#### `get_all_schemes(use_cache=True)`
+Get list of all mutual fund schemes.
+
+```python
+schemes = fetcher.get_all_schemes()
+# Returns: List[Dict] with schemeCode and schemeName
+```
+
+#### `get_scheme(scheme_code, use_cache=True)`
+Get detailed information about a specific scheme including NAV history.
+
+```python
+details = fetcher.get_scheme("119551")
+# Returns: Dict with 'meta' and 'data' (NAV history)
+```
+
+#### `search_schemes(query, use_cache=True)`
+Search for schemes by name (case-insensitive).
+
+```python
+results = fetcher.search_schemes("HDFC Equity")
+# Returns: List[Dict] of matching schemes
+```
+
+#### `get_latest_nav(scheme_code, use_cache=True)`
+Get the most recent NAV for a scheme.
+
+```python
+nav = fetcher.get_latest_nav("119551")
+# Returns: {'date': '01-01-2026', 'nav': '123.45'}
+```
+
+#### `clear_cache(scheme_code=None)`
+Clear cache files.
+
+```python
+# Clear all cache
+fetcher.clear_cache()
+
+# Clear specific scheme cache
+fetcher.clear_cache("119551")
+```
+
+#### `get_cache_info()`
+Get cache statistics.
+
+```python
+info = fetcher.get_cache_info()
+# Returns: Dict with cache_dir, total_files, total_size_mb, cache_ttl_seconds
+```
+
+## Response Format
+
+### Scheme List
+```python
+[
+    {
+        "schemeCode": "119551",
+        "schemeName": "Aditya Birla Sun Life Banking & PSU Debt Fund - DIRECT - IDCW"
+    },
+    ...
+]
+```
+
+### Scheme Details
+```python
+{
+    "meta": {
+        "fund_house": "Aditya Birla Sun Life Mutual Fund",
+        "scheme_type": "Open Ended Schemes",
+        "scheme_category": "Debt Scheme - Banking and PSU Fund",
+        "scheme_code": "119551",
+        "scheme_name": "Aditya Birla Sun Life Banking & PSU Debt Fund - DIRECT - IDCW"
+    },
+    "data": [
+        {
+            "date": "05-01-2026",
+            "nav": "123.4567"
+        },
+        ...
+    ]
+}
+```
+
+## Caching Behavior
+
+- Cache files are stored in `.mfcache/` directory by default
+- Each API endpoint response is cached separately
+- Cache expires after TTL period (default: 1 hour)
+- Cached responses are validated before use
+- Network requests only made when cache is invalid or missing
+
+### Cache Performance
+
+Typical performance improvement with caching:
+- First fetch: 200-500ms (network request)
+- Cached fetch: 1-5ms (file read)
+- **Speedup: 50-500x faster!**
+
+## Example Usage
+
+Run the example script to see all features in action:
+
+```bash
+python example_usage.py
+```
+
+This will demonstrate:
+1. Cache information
+2. Searching for schemes
+3. Getting detailed scheme info
+4. Fetching latest NAV
+5. Viewing historical NAV data
+6. Cache performance benefits
+7. Cache management
+
+## Configuration Examples
+
+### Short-lived cache (5 minutes)
+```python
+fetcher = MFAPIFetcher(cache_ttl=300)
+```
+
+### Long-lived cache (24 hours)
+```python
+fetcher = MFAPIFetcher(cache_ttl=86400)
+```
+
+### Custom cache directory
+```python
+fetcher = MFAPIFetcher(cache_dir="./my_cache")
+```
+
+### Disable caching for specific request
+```python
+# Always fetch fresh data
+data = fetcher.get_scheme("119551", use_cache=False)
+```
+
+## Error Handling
+
+The fetcher includes built-in error handling:
+
+```python
+try:
+    details = fetcher.get_scheme("invalid_code")
+except Exception as e:
+    print(f"Error: {e}")
+```
+
+Common errors:
+- Network timeout
+- Invalid scheme code
+- API unavailable
+- Cache read/write errors
+
+## Best Practices
+
+1. **Set appropriate TTL**: NAV data updates once daily, so cache for at least a few hours
+2. **Handle exceptions**: Wrap API calls in try-except blocks
+3. **Clear stale cache**: Periodically clear cache if data accuracy is critical
+4. **Monitor cache size**: Use `get_cache_info()` to track cache growth
+
+## MFAPI.in Endpoints
+
+This fetcher supports:
+- `GET /mf` - All mutual fund schemes
+- `GET /mf/{scheme_code}` - Specific scheme details with NAV history
+
+## License
+
+This project uses data from [MFAPI.in](https://www.mfapi.in/), a free and open API for Indian Mutual Fund data.
+
+## Contributing
+
+Contributions welcome! Feel free to submit issues or pull requests.
+
+## Roadmap
+
+Potential future enhancements:
+- [ ] Support for date range queries
+- [ ] Batch scheme fetching
+- [ ] Cache compression
+- [ ] SQLite cache backend option
+- [ ] Async/await support
+- [ ] Rate limiting configuration

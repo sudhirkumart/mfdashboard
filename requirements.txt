@@ -1,0 +1,27 @@
+# MF Dashboard - Python Dependencies
+
+# Core dependencies
+requests>=2.31.0           # HTTP library for API calls
+python-dateutil>=2.8.2     # Date utilities
+
+# Excel export
+openpyxl>=3.1.2           # Excel file generation with formulas
+
+# PDF parsing (optional - for CAS statement parsing)
+PyPDF2>=3.0.0             # PDF file parsing
+
+# Data processing
+pandas>=2.0.0             # Data manipulation (optional but recommended)
+
+# Web server (optional - for serving dashboard)
+flask>=3.0.0              # Lightweight web server
+
+# Development dependencies (optional)
+pytest>=7.4.0             # Testing framework
+black>=23.0.0             # Code formatter
+pylint>=2.17.0            # Code linter
+
+# Optional: For advanced features
+# numpy>=1.24.0           # Numerical computing
+# matplotlib>=3.7.0       # Data visualization
+# reportlab>=4.0.0        # PDF generation

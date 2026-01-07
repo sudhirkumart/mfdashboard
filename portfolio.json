@@ -1,0 +1,41 @@
+{
+  "transactions": [
+    {
+      "date": "2025-07-09",
+      "scheme_code": 101585,
+      "scheme_name": "HDFC Equity Savings Fund - GROWTH PLAN",
+      "transaction_type": "BUY",
+      "units": 100,
+      "nav": 57.88499999999999,
+      "amount": 5788.499999999999
+    },
+    {
+      "date": "2025-07-09",
+      "scheme_code": 101585,
+      "scheme_name": "HDFC Equity Savings Fund - GROWTH PLAN",
+      "transaction_type": "BUY",
+      "units": 100,
+      "nav": 57.88499999999999,
+      "amount": 5788.499999999999
+    },
+    {
+      "date": "2025-10-07",
+      "scheme_code": 101585,
+      "scheme_name": "HDFC Equity Savings Fund - GROWTH PLAN",
+      "transaction_type": "BUY",
+      "units": 50,
+      "nav": 62.652,
+      "amount": 3132.6
+    },
+    {
+      "date": "2025-12-06",
+      "scheme_code": 101585,
+      "scheme_name": "HDFC Equity Savings Fund - GROWTH PLAN",
+      "transaction_type": "SELL",
+      "units": 30,
+      "nav": 66.05699999999999,
+      "amount": 1981.7099999999996
+    }
+  ],
+  "last_updated": "2026-01-05T20:56:36.094090"
+}
