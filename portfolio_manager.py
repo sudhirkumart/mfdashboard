@@ -14,26 +14,36 @@ from pathlib import Path
 
 @dataclass
 class Transaction:
-    """Represents a single mutual fund transaction"""
+    """Represents a single transaction (mutual fund or stock)"""
     date: str  # Format: YYYY-MM-DD
-    scheme_code: str
-    scheme_name: str
+    scheme_code: str  # For MF: scheme code, For Stock: ticker symbol (e.g., RELIANCE.NS)
+    scheme_name: str  # For MF: scheme name, For Stock: company name
     transaction_type: str  # 'BUY' or 'SELL'
-    units: float
-    nav: float
+    units: float  # For MF: decimal units, For Stock: integer quantity
+    nav: float  # For MF: NAV, For Stock: price per share
     amount: float  # Total amount (units * nav)
+    asset_type: str = "MUTUAL_FUND"  # "MUTUAL_FUND" or "STOCK" (default for backward compatibility)
+    exchange: str = ""  # For stocks: "NSE", "BSE" (empty for mutual funds)
+    notes: str = ""  # Optional research notes or Google Doc links
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Transaction':
+        # Ensure backward compatibility - add defaults for new fields if not present
+        if 'asset_type' not in data:
+            data['asset_type'] = "MUTUAL_FUND"
+        if 'exchange' not in data:
+            data['exchange'] = ""
+        if 'notes' not in data:
+            data['notes'] = ""
         return cls(**data)
 
 
 @dataclass
 class Holding:
-    """Represents current holdings for a scheme"""
+    """Represents current holdings for an asset (mutual fund or stock)"""
     scheme_code: str
     scheme_name: str
     total_units: float
@@ -43,6 +53,8 @@ class Holding:
     current_value: float
     gain_loss: float
     gain_loss_percentage: float
+    asset_type: str = "MUTUAL_FUND"  # "MUTUAL_FUND" or "STOCK"
+    exchange: str = ""  # For stocks: "NSE", "BSE"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -120,31 +132,48 @@ class PortfolioManager:
         scheme_name: str,
         transaction_type: str,
         units: float,
-        nav: float
+        nav: float,
+        asset_type: str = "MUTUAL_FUND",
+        exchange: str = "",
+        notes: str = ""
     ) -> Transaction:
         """
-        Add a new transaction (buy or sell).
+        Add a new transaction (buy or sell) for mutual fund or stock.
 
         Args:
             date: Transaction date (YYYY-MM-DD)
-            scheme_code: Mutual fund scheme code
-            scheme_name: Mutual fund scheme name
+            scheme_code: For MF: scheme code, For Stock: ticker symbol (e.g., RELIANCE.NS)
+            scheme_name: For MF: scheme name, For Stock: company name
             transaction_type: 'BUY' or 'SELL'
-            units: Number of units
-            nav: NAV at transaction time
+            units: Number of units (MF: decimal, Stock: integer)
+            nav: For MF: NAV, For Stock: price per share
+            asset_type: "MUTUAL_FUND" or "STOCK" (default: "MUTUAL_FUND")
+            exchange: For stocks: "NSE", "BSE" (empty for MF)
+            notes: Optional research notes or Google Doc links
 
         Returns:
             Created transaction object
         """
+        # Validate asset type
+        if asset_type not in ["MUTUAL_FUND", "STOCK"]:
+            raise ValueError(f"Invalid asset_type: {asset_type}. Must be 'MUTUAL_FUND' or 'STOCK'")
+
+        # For stocks, ensure units are integer
+        if asset_type == "STOCK":
+            units = int(units)  # Stocks must have whole number quantities
+
         amount = units * nav
         transaction = Transaction(
             date=date,
-            scheme_code=scheme_code,
+            scheme_code=str(scheme_code),
             scheme_name=scheme_name,
             transaction_type=transaction_type.upper(),
             units=units,
             nav=nav,
-            amount=amount
+            amount=amount,
+            asset_type=asset_type,
+            exchange=exchange,
+            notes=notes
         )
 
         self.transactions.append(transaction)
@@ -153,12 +182,13 @@ class PortfolioManager:
 
         return transaction
 
-    def get_holdings(self, current_navs: Dict[str, float]) -> List[Holding]:
+    def get_holdings(self, current_navs: Dict[str, float], asset_type_filter: Optional[str] = None) -> List[Holding]:
         """
         Calculate current holdings with gain/loss.
 
         Args:
-            current_navs: Dictionary mapping scheme_code to current NAV
+            current_navs: Dictionary mapping scheme_code/symbol to current NAV/price
+            asset_type_filter: Optional filter - "MUTUAL_FUND", "STOCK", or None for all
 
         Returns:
             List of current holdings
@@ -166,13 +196,19 @@ class PortfolioManager:
         holdings_dict: Dict[str, Dict[str, Any]] = {}
 
         for txn in self.transactions:
+            # Apply filter if specified
+            if asset_type_filter and txn.asset_type != asset_type_filter:
+                continue
+
             scheme_code = txn.scheme_code
 
             if scheme_code not in holdings_dict:
                 holdings_dict[scheme_code] = {
                     'scheme_name': txn.scheme_name,
                     'total_units': 0.0,
-                    'invested_amount': 0.0
+                    'invested_amount': 0.0,
+                    'asset_type': txn.asset_type,
+                    'exchange': txn.exchange
                 }
 
             holding = holdings_dict[scheme_code]
@@ -210,7 +246,9 @@ class PortfolioManager:
                 current_nav=round(current_nav, 4),
                 current_value=round(current_value, 2),
                 gain_loss=round(gain_loss, 2),
-                gain_loss_percentage=round(gain_loss_pct, 2)
+                gain_loss_percentage=round(gain_loss_pct, 2),
+                asset_type=data['asset_type'],
+                exchange=data['exchange']
             )
             holdings.append(holding)
 
@@ -352,3 +390,109 @@ class PortfolioManager:
             self.save_portfolio()
             return True
         return False
+
+    def get_stock_symbols(self) -> List[str]:
+        """
+        Get unique stock symbols from transactions.
+
+        Returns:
+            List of unique stock symbols (e.g., ["RELIANCE.NS", "TCS.NS"])
+        """
+        symbols = set()
+        for txn in self.transactions:
+            if txn.asset_type == "STOCK":
+                symbols.add(txn.scheme_code)
+        return sorted(list(symbols))
+
+    def get_mf_scheme_codes(self) -> List[str]:
+        """
+        Get unique mutual fund scheme codes from transactions.
+
+        Returns:
+            List of unique MF scheme codes
+        """
+        codes = set()
+        for txn in self.transactions:
+            if txn.asset_type == "MUTUAL_FUND":
+                codes.add(txn.scheme_code)
+        return sorted(list(codes))
+
+    def get_holdings_by_type(self, current_navs: Dict[str, float], asset_type: Optional[str] = None) -> Dict[str, List[Holding]]:
+        """
+        Get holdings grouped by asset type.
+
+        Args:
+            current_navs: Dictionary mapping scheme_code/symbol to current NAV/price
+            asset_type: Optional filter - "MUTUAL_FUND", "STOCK", or None for all
+
+        Returns:
+            Dictionary with 'mutual_funds' and 'stocks' lists
+        """
+        if asset_type:
+            # Return filtered holdings
+            holdings = self.get_holdings(current_navs, asset_type_filter=asset_type)
+            return {asset_type.lower(): holdings}
+
+        # Get all holdings grouped by type
+        mf_holdings = self.get_holdings(current_navs, asset_type_filter="MUTUAL_FUND")
+        stock_holdings = self.get_holdings(current_navs, asset_type_filter="STOCK")
+
+        return {
+            'mutual_funds': mf_holdings,
+            'stocks': stock_holdings
+        }
+
+    def get_portfolio_summary(self, current_navs: Dict[str, float]) -> Dict[str, Any]:
+        """
+        Get comprehensive portfolio summary with asset type breakdown.
+
+        Args:
+            current_navs: Dictionary mapping scheme_code/symbol to current NAV/price
+
+        Returns:
+            Summary dictionary with total and per-asset-type metrics
+        """
+        # Get all holdings
+        all_holdings = self.get_holdings(current_navs)
+        mf_holdings = [h for h in all_holdings if h.asset_type == "MUTUAL_FUND"]
+        stock_holdings = [h for h in all_holdings if h.asset_type == "STOCK"]
+
+        def calculate_metrics(holdings: List[Holding]) -> Dict[str, Any]:
+            """Helper to calculate metrics for a list of holdings"""
+            if not holdings:
+                return {
+                    'count': 0,
+                    'invested': 0,
+                    'current_value': 0,
+                    'gain_loss': 0,
+                    'gain_loss_pct': 0
+                }
+
+            total_invested = sum(h.invested_amount for h in holdings)
+            total_current = sum(h.current_value for h in holdings)
+            total_gain = total_current - total_invested
+            total_gain_pct = (total_gain / total_invested * 100) if total_invested > 0 else 0
+
+            return {
+                'count': len(holdings),
+                'invested': round(total_invested, 2),
+                'current_value': round(total_current, 2),
+                'gain_loss': round(total_gain, 2),
+                'gain_loss_pct': round(total_gain_pct, 2)
+            }
+
+        # Calculate metrics
+        total_metrics = calculate_metrics(all_holdings)
+        mf_metrics = calculate_metrics(mf_holdings)
+        stock_metrics = calculate_metrics(stock_holdings)
+
+        return {
+            'total': total_metrics,
+            'mutual_funds': mf_metrics,
+            'stocks': stock_metrics,
+            'all_holdings': all_holdings,
+            'holdings_by_type': {
+                'mutual_funds': mf_holdings,
+                'stocks': stock_holdings
+            }
+        }

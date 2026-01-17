@@ -1,0 +1,23 @@
+[Unit]
+Description=Investments Dashboard Web Application
+After=network.target
+
+[Service]
+Type=notify
+User=mfdashboard
+Group=mfdashboard
+WorkingDirectory=/home/mfdashboard/investments-dashboard
+Environment="PATH=/home/mfdashboard/investments-dashboard/venv/bin"
+ExecStart=/home/mfdashboard/investments-dashboard/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:5000 \
+    --timeout 120 \
+    --access-logfile /home/mfdashboard/investments-dashboard/logs/access.log \
+    --error-logfile /home/mfdashboard/investments-dashboard/logs/error.log \
+    web_app:app
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

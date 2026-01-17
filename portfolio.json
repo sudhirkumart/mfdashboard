@@ -7,7 +7,10 @@
       "transaction_type": "BUY",
       "units": 100,
       "nav": 57.88499999999999,
-      "amount": 5788.499999999999
+      "amount": 5788.499999999999,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": ""
     },
     {
       "date": "2025-07-09",
@@ -16,7 +19,10 @@
       "transaction_type": "BUY",
       "units": 100,
       "nav": 57.88499999999999,
-      "amount": 5788.499999999999
+      "amount": 5788.499999999999,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": ""
     },
     {
       "date": "2025-10-07",
@@ -25,7 +31,10 @@
       "transaction_type": "BUY",
       "units": 50,
       "nav": 62.652,
-      "amount": 3132.6
+      "amount": 3132.6,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": ""
     },
     {
       "date": "2025-12-06",
@@ -34,7 +43,10 @@
       "transaction_type": "SELL",
       "units": 30,
       "nav": 66.05699999999999,
-      "amount": 1981.7099999999996
+      "amount": 1981.7099999999996,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": ""
     }
   ],
   "last_updated": "2026-01-05T20:56:36.094090"

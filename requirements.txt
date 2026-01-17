@@ -13,8 +13,9 @@ PyPDF2>=3.0.0             # PDF file parsing
 # Data processing
 pandas>=2.0.0             # Data manipulation (optional but recommended)
 
-# Web server (optional - for serving dashboard)
+# Web server (required for dashboard)
 flask>=3.0.0              # Lightweight web server
+gunicorn>=21.2.0          # Production WSGI server (for AWS deployment)
 
 # Development dependencies (optional)
 pytest>=7.4.0             # Testing framework

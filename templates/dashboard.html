@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mutual Fund Portfolio Dashboard</title>
+    <title>Investments Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -272,19 +272,83 @@
         .hidden {
             display: none;
         }
+
+        /* Asset Filter Buttons */
+        .asset-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #f0f3ff;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Asset Type Badge */
+        .asset-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-stock {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .badge-mf {
+            background: #667eea;
+            color: white;
+        }
+
+        .exchange-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #666;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Mutual Fund Portfolio Dashboard</h1>
-            <p>Track your investments and calculate capital gains</p>
+            <h1>Investments Dashboard</h1>
+            <p>Track your mutual funds, stocks, and calculate capital gains</p>
 
             <div class="tabs">
                 <button class="tab active" onclick="showTab('portfolio')">Portfolio</button>
                 <button class="tab" onclick="showTab('add')">Add Transaction</button>
                 <button class="tab" onclick="showTab('gains')">Capital Gains</button>
                 <button class="tab" onclick="showTab('transactions')">Transactions</button>
+                <button class="tab" onclick="showTab('stock-prices')">Stock Prices</button>
+                <button class="tab" onclick="showTab('insights')">Insights & Tips</button>
+                <button class="tab" onclick="showTab('import-export')">Import/Export</button>
             </div>
         </div>
 
@@ -310,6 +374,15 @@
                 </div>
             </div>
 
+            <!-- Asset Type Filter -->
+            <div class="card">
+                <div class="asset-filter">
+                    <button class="filter-btn active" data-filter="all" onclick="filterPortfolio('all')">All Assets</button>
+                    <button class="filter-btn" data-filter="mutual_funds" onclick="filterPortfolio('mutual_funds')">Mutual Funds</button>
+                    <button class="filter-btn" data-filter="stocks" onclick="filterPortfolio('stocks')">Stocks</button>
+                </div>
+            </div>
+
             <div class="card">
                 <h2>Portfolio Distribution</h2>
                 <div class="chart-container">
@@ -331,17 +404,80 @@
                 <h2>Add Transaction</h2>
 
                 <div class="form-group">
-                    <label>Search Scheme</label>
-                    <input type="text" id="scheme-search" placeholder="Enter scheme name...">
-                    <div id="search-results" class="search-results hidden"></div>
+                    <label>Asset Type</label>
+                    <select id="asset-type" onchange="toggleAssetFields()">
+                        <option value="MUTUAL_FUND">Mutual Fund</option>
+                        <option value="STOCK">Stock</option>
+                    </select>
                 </div>
 
-                <div class="form-group">
-                    <label>Selected Scheme</label>
-                    <input type="text" id="selected-scheme" readonly placeholder="Search and select a scheme">
-                    <input type="hidden" id="selected-scheme-code">
+                <!-- Mutual Fund Fields -->
+                <div id="mf-fields">
+                    <div class="form-group">
+                        <label>Search Scheme</label>
+                        <input type="text" id="scheme-search" placeholder="Enter scheme name...">
+                        <div id="search-results" class="search-results hidden"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selected Scheme</label>
+                        <input type="text" id="selected-scheme" readonly placeholder="Search and select a scheme">
+                        <input type="hidden" id="selected-scheme-code">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Units</label>
+                        <input type="number" step="0.001" id="mf-units" placeholder="Number of units">
+                    </div>
+
+                    <div class="form-group">
+                        <label>NAV</label>
+                        <input type="number" step="0.01" id="mf-nav" placeholder="NAV at transaction">
+                    </div>
                 </div>
 
+                <!-- Stock Fields -->
+                <div id="stock-fields" class="hidden">
+                    <div class="form-group">
+                        <label>Search Stock</label>
+                        <input type="text" id="stock-search" placeholder="Enter stock name...">
+                        <div id="stock-search-results" class="search-results hidden"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock Symbol</label>
+                        <input type="text" id="stock-symbol" placeholder="e.g., RELIANCE.NS" readonly>
+                        <small>Format: SYMBOL.EXCHANGE</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="company-name" placeholder="Reliance Industries Limited" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exchange</label>
+                        <input type="text" id="exchange" readonly placeholder="NSE or BSE">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity (shares)</label>
+                        <input type="number" step="1" id="stock-quantity" placeholder="Number of shares (integer)">
+                        <small>Must be whole number for stocks</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price per Share</label>
+                        <input type="number" step="0.01" id="stock-price" placeholder="Purchase/Sale price">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Research Notes (Optional)</label>
+                        <input type="text" id="stock-notes" placeholder="Google Doc URL or notes">
+                    </div>
+                </div>
+
+                <!-- Common Fields -->
                 <div class="form-group">
                     <label>Transaction Type</label>
                     <select id="txn-type">
@@ -353,16 +489,6 @@
                 <div class="form-group">
                     <label>Date</label>
                     <input type="date" id="txn-date" value="">
-                </div>
-
-                <div class="form-group">
-                    <label>Units</label>
-                    <input type="number" step="0.001" id="txn-units" placeholder="Number of units">
-                </div>
-
-                <div class="form-group">
-                    <label>NAV</label>
-                    <input type="number" step="0.01" id="txn-nav" placeholder="NAV at transaction">
                 </div>
 
                 <button class="btn" onclick="addTransaction()">Add Transaction</button>
@@ -412,11 +538,127 @@
                 </div>
             </div>
         </div>
+
+        <!-- Stock Prices Tab -->
+        <div id="stock-prices-content" class="content">
+            <div class="card">
+                <h2>Stock Prices</h2>
+                <p>Manually manage stock prices for your portfolio</p>
+
+                <div style="padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                    <strong>Coming Soon:</strong> Automatic price fetching from APIs (yfinance, Alpha Vantage, NSE/BSE)
+                </div>
+
+                <div id="stock-prices-list">
+                    <div class="loading">Loading stock prices...</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Update Stock Price</h2>
+                <form onsubmit="updateStockPrice(event)">
+                    <div class="form-group">
+                        <label>Select Stock</label>
+                        <select id="price-stock-symbol" required>
+                            <option value="">-- Select Stock --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Price (Rs.)</label>
+                        <input type="number" id="price-value" step="0.01" min="0.01" required placeholder="e.g., 2850.50">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price Date</label>
+                        <input type="date" id="price-date" required>
+                    </div>
+
+                    <button type="submit" class="btn">Update Price</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Insights & Tips Tab -->
+        <div id="insights-content" class="content">
+            <div class="card">
+                <h2>Investment Insights & Tips</h2>
+                <p>Key financial metrics and investment tips from our curated knowledge base</p>
+
+                <div style="padding: 15px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #667eea; margin-bottom: 20px;">
+                    <strong>Source:</strong> <a href="https://docs.google.com/spreadsheets/d/1Bih9HJltbVwKzhJr3MdkFUB-Hh261oTEFBjI5s7TlR4/edit?gid=756728702#gid=756728702" target="_blank" style="color: #667eea;">View Google Spreadsheet</a>
+                </div>
+
+                <div id="insights-list">
+                    <div class="loading">Loading insights...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import/Export Tab -->
+        <div id="import-export-content" class="content">
+            <div class="card">
+                <h2>Export Portfolio</h2>
+                <p>Download your portfolio data in various formats</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <button class="btn" onclick="exportData('json')">
+                        <strong>Export to JSON</strong><br>
+                        <small>Complete portfolio data</small>
+                    </button>
+                    <button class="btn" onclick="exportData('csv')">
+                        <strong>Export Holdings (CSV)</strong><br>
+                        <small>Current holdings</small>
+                    </button>
+                    <button class="btn" onclick="exportData('csv-transactions')">
+                        <strong>Export Transactions (CSV)</strong><br>
+                        <small>All transactions</small>
+                    </button>
+                    <button class="btn" onclick="exportData('excel')">
+                        <strong>Export to Excel</strong><br>
+                        <small>Full report with sheets</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Import Portfolio</h2>
+                <p>Upload files to import portfolio data</p>
+
+                <div class="form-group">
+                    <label>Import Format</label>
+                    <select id="import-format">
+                        <option value="json">JSON File</option>
+                        <option value="csv">CSV File (Holdings)</option>
+                        <option value="excel">Excel File</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Select File</label>
+                    <input type="file" id="import-file" accept=".json,.csv,.xlsx">
+                </div>
+
+                <button class="btn" onclick="importData()">Import Portfolio</button>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <strong>Import Notes:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>JSON: Complete portfolio format (recommended)</li>
+                        <li>CSV: Holdings with scheme details</li>
+                        <li>Excel: Multiple sheets (Holdings, Transactions)</li>
+                        <li>Imported data will be merged with existing portfolio</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         let portfolioChart = null;
         let searchTimeout = null;
+        let allHoldings = [];  // Store all holdings for filtering
+        let currentFilter = 'all';  // Track current filter
 
         // Set today's date as default
         document.getElementById('txn-date').valueAsDate = new Date();
@@ -435,11 +677,28 @@
             if (tabName === 'portfolio') loadPortfolio();
             else if (tabName === 'gains') calculateGains();
             else if (tabName === 'transactions') loadTransactions();
+            else if (tabName === 'stock-prices') loadStockPrices();
+            else if (tabName === 'insights') loadInsights();
         }
 
         // Format currency
         function formatCurrency(amount) {
             return 'Rs.' + amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        // Toggle between MF and Stock fields
+        function toggleAssetFields() {
+            const assetType = document.getElementById('asset-type').value;
+            const mfFields = document.getElementById('mf-fields');
+            const stockFields = document.getElementById('stock-fields');
+
+            if (assetType === 'STOCK') {
+                mfFields.classList.add('hidden');
+                stockFields.classList.remove('hidden');
+            } else {
+                mfFields.classList.remove('hidden');
+                stockFields.classList.add('hidden');
+            }
         }
 
         // Search schemes
@@ -487,20 +746,87 @@
             document.getElementById('scheme-search').value = '';
         }
 
+        // Search stocks
+        document.getElementById('stock-search').addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+
+            if (query.length < 2) {
+                document.getElementById('stock-search-results').classList.add('hidden');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/api/stocks/search/${encodeURIComponent(query)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            displayStockSearchResults(data.stocks);
+                        }
+                    });
+            }, 500);
+        });
+
+        function displayStockSearchResults(stocks) {
+            const container = document.getElementById('stock-search-results');
+
+            if (stocks.length === 0) {
+                container.innerHTML = '<div style="padding: 12px;">No stocks found</div>';
+            } else {
+                container.innerHTML = stocks.map(s =>
+                    `<div class="search-item" onclick="selectStock('${s.symbol}', '${s.name.replace(/'/g, "\\'")}', '${s.exchange}')">
+                        <strong>${s.name}</strong><br>
+                        <small>${s.symbol} - ${s.exchange}</small>
+                    </div>`
+                ).join('');
+            }
+
+            container.classList.remove('hidden');
+        }
+
+        function selectStock(symbol, name, exchange) {
+            document.getElementById('stock-symbol').value = symbol;
+            document.getElementById('company-name').value = name;
+            document.getElementById('exchange').value = exchange;
+            document.getElementById('stock-search-results').classList.add('hidden');
+            document.getElementById('stock-search').value = '';
+        }
+
         // Add transaction
         function addTransaction() {
+            const assetType = document.getElementById('asset-type').value;
             const data = {
-                scheme_code: document.getElementById('selected-scheme-code').value,
-                scheme_name: document.getElementById('selected-scheme').value,
+                asset_type: assetType,
                 transaction_type: document.getElementById('txn-type').value,
-                date: document.getElementById('txn-date').value,
-                units: document.getElementById('txn-units').value,
-                nav: document.getElementById('txn-nav').value
+                date: document.getElementById('txn-date').value
             };
 
-            if (!data.scheme_code || !data.units || !data.nav) {
-                alert('Please fill all fields');
-                return;
+            if (assetType === 'STOCK') {
+                // Stock transaction
+                data.scheme_code = document.getElementById('stock-symbol').value;
+                data.scheme_name = document.getElementById('company-name').value;
+                data.exchange = document.getElementById('exchange').value;
+                data.units = parseFloat(document.getElementById('stock-quantity').value);
+                data.nav = parseFloat(document.getElementById('stock-price').value);
+                data.notes = document.getElementById('stock-notes').value;
+
+                if (!data.scheme_code || !data.scheme_name || !data.units || !data.nav) {
+                    alert('Please fill all required stock fields');
+                    return;
+                }
+            } else {
+                // Mutual fund transaction
+                data.scheme_code = document.getElementById('selected-scheme-code').value;
+                data.scheme_name = document.getElementById('selected-scheme').value;
+                data.units = parseFloat(document.getElementById('mf-units').value);
+                data.nav = parseFloat(document.getElementById('mf-nav').value);
+                data.exchange = '';
+                data.notes = '';
+
+                if (!data.scheme_code || !data.units || !data.nav) {
+                    alert('Please fill all required mutual fund fields');
+                    return;
+                }
             }
 
             fetch('/api/transactions', {
@@ -512,11 +838,20 @@
             .then(data => {
                 if (data.success) {
                     alert('Transaction added successfully!');
-                    // Clear form
-                    document.getElementById('selected-scheme').value = '';
-                    document.getElementById('selected-scheme-code').value = '';
-                    document.getElementById('txn-units').value = '';
-                    document.getElementById('txn-nav').value = '';
+                    // Clear form based on asset type
+                    if (assetType === 'STOCK') {
+                        document.getElementById('stock-symbol').value = '';
+                        document.getElementById('company-name').value = '';
+                        document.getElementById('exchange').value = '';
+                        document.getElementById('stock-quantity').value = '';
+                        document.getElementById('stock-price').value = '';
+                        document.getElementById('stock-notes').value = '';
+                    } else {
+                        document.getElementById('selected-scheme').value = '';
+                        document.getElementById('selected-scheme-code').value = '';
+                        document.getElementById('mf-units').value = '';
+                        document.getElementById('mf-nav').value = '';
+                    }
                 } else {
                     alert('Error: ' + data.error);
                 }
@@ -535,6 +870,9 @@
         }
 
         function displayPortfolio(summary, holdings) {
+            // Store holdings globally for filtering
+            allHoldings = holdings;
+
             // Update summary cards
             document.getElementById('total-invested').textContent = formatCurrency(summary.total_invested);
             document.getElementById('current-value').textContent = formatCurrency(summary.current_value);
@@ -547,29 +885,52 @@
             document.getElementById('total-schemes').textContent = summary.total_schemes;
 
             // Display holdings
+            renderHoldings(holdings);
+        }
+
+        function renderHoldings(holdings) {
             const container = document.getElementById('holdings-list');
             if (holdings.length === 0) {
                 container.innerHTML = '<p>No holdings found. Add some transactions to get started!</p>';
+                // Clear chart if no holdings
+                if (portfolioChart) {
+                    portfolioChart.destroy();
+                    portfolioChart = null;
+                }
             } else {
                 container.innerHTML = holdings.map(h => {
                     const gainClass = h.gain_loss >= 0 ? 'positive' : 'negative';
                     const gainSymbol = h.gain_loss >= 0 ? '+' : '';
 
+                    // Determine asset type
+                    const isStock = h.asset_type === 'STOCK';
+                    const assetBadge = isStock
+                        ? '<span class="asset-badge badge-stock">STOCK</span>'
+                        : '<span class="asset-badge badge-mf">MF</span>';
+                    const exchangeTag = isStock && h.exchange
+                        ? `<span class="exchange-tag">${h.exchange}</span>`
+                        : '';
+
+                    // Use appropriate labels
+                    const unitsLabel = isStock ? 'Quantity:' : 'Units:';
+                    const avgPriceLabel = isStock ? 'Avg Price:' : 'Avg NAV:';
+                    const currentPriceLabel = isStock ? 'Current Price:' : 'Current NAV:';
+
                     return `
-                        <div class="holding-item">
-                            <h3>${h.scheme_name}</h3>
+                        <div class="holding-item" data-asset-type="${h.asset_type}">
+                            <h3>${h.scheme_name}${assetBadge}${exchangeTag}</h3>
                             <small>Code: ${h.scheme_code}</small>
                             <div class="holding-details">
                                 <div class="detail-item">
-                                    <span class="detail-label">Units:</span>
+                                    <span class="detail-label">${unitsLabel}</span>
                                     <span class="detail-value">${h.total_units}</span>
                                 </div>
                                 <div class="detail-item">
-                                    <span class="detail-label">Avg NAV:</span>
+                                    <span class="detail-label">${avgPriceLabel}</span>
                                     <span class="detail-value">Rs.${h.average_nav}</span>
                                 </div>
                                 <div class="detail-item">
-                                    <span class="detail-label">Current NAV:</span>
+                                    <span class="detail-label">${currentPriceLabel}</span>
                                     <span class="detail-value">Rs.${h.current_nav}</span>
                                 </div>
                                 <div class="detail-item">
@@ -592,6 +953,30 @@
                 // Update chart
                 updateChart(holdings);
             }
+        }
+
+        // Filter portfolio by asset type
+        function filterPortfolio(filterType) {
+            currentFilter = filterType;
+
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-filter') === filterType) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter holdings
+            let filteredHoldings = allHoldings;
+            if (filterType === 'mutual_funds') {
+                filteredHoldings = allHoldings.filter(h => h.asset_type === 'MUTUAL_FUND');
+            } else if (filterType === 'stocks') {
+                filteredHoldings = allHoldings.filter(h => h.asset_type === 'STOCK');
+            }
+
+            // Re-render with filtered data
+            renderHoldings(filteredHoldings);
         }
 
         function updateChart(holdings) {
@@ -719,6 +1104,282 @@
                         }
                     });
             }
+        }
+
+        // Stock Prices Management
+        function loadStockPrices() {
+            // Load all stock prices
+            fetch('/api/stocks/prices')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        displayStockPrices(data.prices);
+                    }
+                });
+
+            // Populate stock dropdown from portfolio
+            fetch('/api/portfolio')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        populateStockDropdown(data.holdings);
+                    }
+                });
+
+            // Set today's date as default
+            document.getElementById('price-date').valueAsDate = new Date();
+        }
+
+        function displayStockPrices(prices) {
+            const container = document.getElementById('stock-prices-list');
+
+            if (Object.keys(prices).length === 0) {
+                container.innerHTML = '<p>No stock prices found. Add stocks to your portfolio first.</p>';
+            } else {
+                container.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th>Company Name</th>
+                                <th>Exchange</th>
+                                <th>Price (Rs.)</th>
+                                <th>Date</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(prices).map(([symbol, info]) => `
+                                <tr>
+                                    <td><strong>${symbol}</strong></td>
+                                    <td>${info.company_name || 'N/A'}</td>
+                                    <td><span class="exchange-tag">${info.exchange}</span></td>
+                                    <td><strong>Rs.${info.price.toFixed(2)}</strong></td>
+                                    <td>${info.date}</td>
+                                    <td>${info.source}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 15px; text-align: right; color: #666; font-size: 14px;">
+                        Last updated: ${new Date().toLocaleString('en-IN')}
+                    </div>
+                `;
+            }
+        }
+
+        function populateStockDropdown(holdings) {
+            const dropdown = document.getElementById('price-stock-symbol');
+
+            // Filter stock holdings
+            const stockHoldings = holdings.filter(h => h.asset_type === 'STOCK');
+
+            if (stockHoldings.length === 0) {
+                dropdown.innerHTML = '<option value="">No stocks in portfolio</option>';
+                dropdown.disabled = true;
+            } else {
+                dropdown.innerHTML = '<option value="">-- Select Stock --</option>' +
+                    stockHoldings.map(h => `
+                        <option value="${h.scheme_code}" data-exchange="${h.exchange}">
+                            ${h.scheme_name} (${h.scheme_code})
+                        </option>
+                    `).join('');
+                dropdown.disabled = false;
+            }
+        }
+
+        function updateStockPrice(event) {
+            event.preventDefault();
+
+            const symbolSelect = document.getElementById('price-stock-symbol');
+            const selectedOption = symbolSelect.options[symbolSelect.selectedIndex];
+            const symbol = selectedOption.value;
+            const exchange = selectedOption.getAttribute('data-exchange');
+            const price = parseFloat(document.getElementById('price-value').value);
+            const priceDate = document.getElementById('price-date').value;
+
+            if (!symbol) {
+                alert('Please select a stock');
+                return;
+            }
+
+            fetch('/api/stocks/price', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    symbol: symbol,
+                    exchange: exchange,
+                    price: price,
+                    date: priceDate
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Stock price updated successfully!');
+                    loadStockPrices();  // Reload the prices table
+                    // Clear the price field
+                    document.getElementById('price-value').value = '';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+
+        // Insights & Tips
+        function loadInsights() {
+            fetch('/api/insights')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        displayInsights(data.data);
+                    } else {
+                        document.getElementById('insights-list').innerHTML =
+                            '<div style="padding: 20px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">' +
+                            '<strong>Error:</strong> ' + data.error +
+                            '<br><small>Make sure the Google Spreadsheet is publicly accessible.</small>' +
+                            '</div>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('insights-list').innerHTML =
+                        '<div style="padding: 20px; background: #f8d7da; border-radius: 8px; border-left: 4px solid #dc3545;">' +
+                        '<strong>Connection Error:</strong> Unable to fetch insights. Check your internet connection.' +
+                        '</div>';
+                });
+        }
+
+        function displayInsights(insights) {
+            const container = document.getElementById('insights-list');
+
+            if (insights.length === 0) {
+                container.innerHTML = '<p>No insights found in the spreadsheet.</p>';
+                return;
+            }
+
+            // Get all column names from first insight
+            const columns = Object.keys(insights[0]);
+
+            // Create insight cards
+            container.innerHTML = insights.map((insight, index) => {
+                // Build insight content from all columns
+                let contentHtml = '';
+
+                for (const [key, value] of Object.entries(insight)) {
+                    if (value && value.trim()) {
+                        // If column has a name, use it as label
+                        const label = key ? `<strong>${key}:</strong> ` : '';
+                        const formattedValue = value.replace(/\n/g, '<br>');
+                        contentHtml += `<p style="margin: 10px 0;">${label}${formattedValue}</p>`;
+                    }
+                }
+
+                return `
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #667eea;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #667eea; margin: 0;">Tip #${index + 1}</h3>
+                        </div>
+                        <div style="line-height: 1.6; color: #333;">
+                            ${contentHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add last updated timestamp
+            container.innerHTML += `
+                <div style="margin-top: 20px; text-align: right; color: #666; font-size: 14px;">
+                    Last updated: ${new Date().toLocaleString('en-IN')}
+                </div>
+            `;
+        }
+
+        // Export functions
+        function exportData(format) {
+            let url;
+            switch(format) {
+                case 'json':
+                    url = '/api/export/json';
+                    break;
+                case 'csv':
+                    url = '/api/export/csv';
+                    break;
+                case 'csv-transactions':
+                    url = '/api/export/csv/transactions';
+                    break;
+                case 'excel':
+                    url = '/api/export/excel';
+                    break;
+                default:
+                    alert('Unknown export format');
+                    return;
+            }
+
+            // Create a hidden link and trigger download
+            window.location.href = url;
+        }
+
+        // Import function
+        function importData() {
+            const format = document.getElementById('import-format').value;
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file to import');
+                return;
+            }
+
+            // Validate file extension
+            const fileName = file.name.toLowerCase();
+            if (format === 'json' && !fileName.endsWith('.json')) {
+                alert('Please select a JSON file');
+                return;
+            } else if (format === 'csv' && !fileName.endsWith('.csv')) {
+                alert('Please select a CSV file');
+                return;
+            } else if (format === 'excel' && !fileName.endsWith('.xlsx')) {
+                alert('Please select an Excel file (.xlsx)');
+                return;
+            }
+
+            // Create FormData and upload
+            const formData = new FormData();
+            formData.append('file', file);
+
+            let url;
+            switch(format) {
+                case 'json':
+                    url = '/api/import/json';
+                    break;
+                case 'csv':
+                    url = '/api/import/csv';
+                    break;
+                case 'excel':
+                    url = '/api/import/excel';
+                    break;
+            }
+
+            // Show loading
+            alert('Importing... Please wait.');
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    fileInput.value = ''; // Clear file input
+                    loadPortfolio(); // Refresh portfolio
+                } else {
+                    alert('Import error: ' + data.error);
+                }
+            })
+            .catch(err => {
+                alert('Import failed: ' + err.message);
+            });
         }
 
         // Load initial data
