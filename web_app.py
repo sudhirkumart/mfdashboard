@@ -26,9 +26,23 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production-use-
 fetcher = MFAPIFetcher()
 portfolio = PortfolioManager()
 
-# Ensure output directory exists
-OUTPUT_DIR = Path("data/output")
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+# Ensure output directory exists with proper permissions
+# Use absolute path to avoid permission issues
+BASE_DIR = Path(__file__).resolve().parent
+OUTPUT_DIR = BASE_DIR / "data" / "output"
+
+try:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    # Set permissions to be writable (0755)
+    os.chmod(OUTPUT_DIR, 0o755)
+    if OUTPUT_DIR.parent.exists():
+        os.chmod(OUTPUT_DIR.parent, 0o755)
+except Exception as e:
+    # Fallback to /tmp if data/output is not writable
+    import tempfile
+    OUTPUT_DIR = Path(tempfile.gettempdir()) / "mfdashboard_exports"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Warning: Using temporary directory {OUTPUT_DIR} for exports")
 
 
 @app.route('/')

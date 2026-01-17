@@ -777,6 +777,76 @@ sudo systemctl restart investments-dashboard
 
 ---
 
+### Issue 8: Import/Export Permission Errors
+
+**Error**: `[Errno 13] Permission denied: 'data/output/...'`
+
+**Problem**: Application cannot write to data/output directory
+
+**Solutions**:
+
+**Option 1: Run the Fix Script** (Easiest)
+```bash
+cd ~/mfdashboard
+
+# Make script executable
+chmod +x fix_permissions.sh
+
+# Run the script
+./fix_permissions.sh
+
+# Restart application
+sudo systemctl restart investments-dashboard
+```
+
+**Option 2: Manual Fix**
+```bash
+cd ~/mfdashboard
+
+# Create directory if missing
+mkdir -p data/output
+
+# Set correct ownership
+sudo chown -R ubuntu:ubuntu data/
+
+# Set proper permissions
+chmod 755 data
+chmod 755 data/output
+
+# Verify
+ls -la data/
+
+# Restart application
+sudo systemctl restart investments-dashboard
+```
+
+**Option 3: Check Systemd Service Permissions**
+```bash
+# Verify service is running as correct user
+sudo systemctl status investments-dashboard | grep "Main PID"
+
+# Check which user owns the files
+ls -la ~/mfdashboard/data/
+
+# If service is running as different user, update the service file:
+sudo nano /etc/systemd/system/investments-dashboard.service
+# Ensure "User=ubuntu" is set
+
+# Reload and restart
+sudo systemctl daemon-reload
+sudo systemctl restart investments-dashboard
+```
+
+**Prevention**:
+The latest version of `web_app.py` includes automatic fallback to `/tmp` directory if `data/output` is not writable. Update your code by pulling latest changes:
+```bash
+cd ~/mfdashboard
+git pull origin claude/review-changes-mkib5mpw53u71efz-nWWqJ
+sudo systemctl restart investments-dashboard
+```
+
+---
+
 ### Quick Diagnostic Commands
 
 Run these to gather information for troubleshooting:
