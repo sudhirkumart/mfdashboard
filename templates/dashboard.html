@@ -333,6 +333,193 @@
             color: #666;
             margin-left: 8px;
         }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .header {
+                padding: 20px 15px;
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 15px;
+            }
+
+            .tab {
+                padding: 10px 16px;
+                font-size: 14px;
+                flex: 1 1 calc(50% - 4px);
+                min-width: 120px;
+                text-align: center;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .summary-card {
+                padding: 20px 15px;
+            }
+
+            .summary-card h3 {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .summary-card .value {
+                font-size: 1.8em;
+            }
+
+            .summary-card .change {
+                font-size: 0.9em;
+            }
+
+            .card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .card h2 {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+            }
+
+            .asset-filter {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .filter-btn {
+                flex: 1 1 calc(33.33% - 5px);
+                min-width: 80px;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .holdings-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .holdings-table table {
+                font-size: 12px;
+                min-width: 600px;
+            }
+
+            .holdings-table th,
+            .holdings-table td {
+                padding: 8px 6px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .form-group label {
+                font-size: 14px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .chart-container {
+                height: 250px;
+                margin: 15px 0;
+            }
+
+            .transactions-list {
+                font-size: 13px;
+            }
+
+            .transaction-item {
+                padding: 12px;
+            }
+
+            .import-options {
+                grid-template-columns: 1fr;
+            }
+
+            .option-card {
+                padding: 15px;
+            }
+
+            .file-drop-zone {
+                padding: 20px;
+                min-height: 120px;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .header p {
+                font-size: 0.85em;
+            }
+
+            .tab {
+                padding: 8px 12px;
+                font-size: 13px;
+                flex: 1 1 100%;
+            }
+
+            .summary-card .value {
+                font-size: 1.5em;
+            }
+
+            .card h2 {
+                font-size: 1.1em;
+            }
+
+            .filter-btn {
+                flex: 1 1 100%;
+                padding: 8px 10px;
+            }
+
+            .btn {
+                padding: 8px 14px;
+                font-size: 13px;
+                width: 100%;
+            }
+
+            .holdings-table table {
+                font-size: 11px;
+            }
+
+            .holdings-table th,
+            .holdings-table td {
+                padding: 6px 4px;
+            }
+        }
     </style>
 </head>
 <body>
