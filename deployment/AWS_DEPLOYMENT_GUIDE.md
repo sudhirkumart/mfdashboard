@@ -570,6 +570,243 @@ Free services:
 
 ---
 
+## Common Issues & Troubleshooting
+
+### Issue 1: EC2 Instance Connect Failed
+
+**Error**: "Failed to connect to your instance - Error establishing SSH connection"
+
+**Causes & Solutions**:
+
+1. **Instance Not Fully Initialized**
+   ```bash
+   # Wait 2-5 minutes after launching
+   # Check EC2 Console: Status checks should show "2/2 checks passed"
+   ```
+
+2. **Security Group Misconfiguration**
+   - Go to EC2 Console → Security → Security Group
+   - Edit inbound rules
+   - For SSH troubleshooting, temporarily set source to `0.0.0.0/0`
+   - **Important**: EC2 Instance Connect needs access from AWS IP ranges, not just "My IP"
+
+3. **Use SSH Key Instead** (More Reliable)
+   ```bash
+   # Windows PowerShell / Mac / Linux
+   ssh -i investments-dashboard-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
+   ```
+
+**Note**: When configuring security group with "My IP", AWS auto-detects your **public IP** (e.g., 122.161.67.79), which is different from your **local IP** shown in `ipconfig` (e.g., 192.168.1.4). The public IP is correct - use it!
+
+---
+
+### Issue 2: Wrong IP Address for Connection
+
+**Error**: Connection timeout or "Connection refused"
+
+**Problem**: Using your own public IP instead of EC2 instance IP
+
+**Solution**:
+1. Go to EC2 Console → Instances
+2. Find **Public IPv4 address** in instance details (e.g., 13.234.56.78)
+3. Use **EC2 instance IP**, NOT your computer's IP
+4. Your computer IP (shown when selecting "My IP") goes in the security group
+5. EC2 instance IP is what you connect TO
+
+```bash
+# Correct command
+ssh -i key.pem ubuntu@EC2_INSTANCE_IP
+
+# Example
+ssh -i key.pem ubuntu@13.234.56.78  # ✓ EC2 instance IP
+ssh -i key.pem ubuntu@122.161.67.79 # ✗ Your own IP - WRONG!
+```
+
+---
+
+### Issue 3: Nginx Configuration Test Failed
+
+**Error**: `nginx: [emerg] ... failed (2: No such file or directory)`
+
+**Solution**:
+```bash
+# Remove broken symbolic links
+sudo rm -f /etc/nginx/sites-enabled/investments-dashboard
+
+# Recreate the configuration file
+sudo nano /etc/nginx/sites-available/investments-dashboard
+# Paste the configuration exactly as shown in Step 7
+
+# Create symbolic link properly
+sudo ln -sf /etc/nginx/sites-available/investments-dashboard /etc/nginx/sites-enabled/
+
+# Remove default site
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# If test passes, restart
+sudo systemctl restart nginx
+```
+
+---
+
+### Issue 4: Application Not Starting
+
+**Error**: Service shows "failed" or "inactive"
+
+**Diagnosis**:
+```bash
+# Check service status
+sudo systemctl status investments-dashboard
+
+# View detailed logs
+sudo journalctl -u investments-dashboard -n 50 --no-pager
+
+# Common issues:
+# - Missing Python packages
+# - Incorrect paths in service file
+# - Port already in use
+```
+
+**Solutions**:
+```bash
+# Reinstall dependencies
+cd ~/mfdashboard
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Check if port 8000 is in use
+sudo netstat -tlnp | grep 8000
+# If occupied, kill the process or change port in service file
+
+# Restart service
+sudo systemctl restart investments-dashboard
+```
+
+---
+
+### Issue 5: Can't Access Dashboard in Browser
+
+**Checklist**:
+
+1. **Check if app is running**:
+   ```bash
+   sudo systemctl status investments-dashboard
+   # Should show "active (running)"
+   ```
+
+2. **Check if Nginx is running**:
+   ```bash
+   sudo systemctl status nginx
+   # Should show "active (running)"
+   ```
+
+3. **Verify ports are listening**:
+   ```bash
+   sudo netstat -tlnp | grep :80    # Nginx should listen on port 80
+   sudo netstat -tlnp | grep :8000  # App should listen on port 8000
+   ```
+
+4. **Check AWS Security Group**:
+   - EC2 Console → Instance → Security tab
+   - Inbound rules MUST include:
+     - Type: HTTP, Port: 80, Source: 0.0.0.0/0
+   - If missing, add the rule
+
+5. **Verify you're using correct IP**:
+   - Use EC2 instance's **Public IPv4 address**
+   - Format: `http://YOUR_EC2_PUBLIC_IP` (not https)
+   - Example: `http://13.234.56.78`
+
+6. **Check logs for errors**:
+   ```bash
+   # App logs
+   sudo journalctl -u investments-dashboard -f
+
+   # Nginx error logs
+   sudo tail -f /var/log/nginx/error.log
+
+   # Nginx access logs
+   sudo tail -f /var/log/nginx/access.log
+   ```
+
+---
+
+### Issue 6: File Upload Failed with SCP
+
+**Error**: Permission denied or file not found
+
+**Solutions**:
+```bash
+# Windows PowerShell: Use forward slashes for remote path
+scp -i Downloads\investments-dashboard-key.pem -r . ubuntu@IP:~/mfdashboard/
+
+# Mac/Linux: Ensure proper key permissions
+chmod 400 investments-dashboard-key.pem
+scp -i investments-dashboard-key.pem -r . ubuntu@IP:~/mfdashboard/
+
+# Verify files uploaded
+ssh -i key.pem ubuntu@IP
+cd ~/mfdashboard
+ls -la
+find . -type f | wc -l  # Should show 60+ files
+```
+
+---
+
+### Issue 7: Portfolio Data Not Loading
+
+**Problem**: Dashboard loads but shows no data
+
+**Solutions**:
+```bash
+# Check if portfolio.json exists
+ls -la ~/mfdashboard/portfolio.json
+
+# If missing, copy from example
+cp ~/mfdashboard/portfolio.json.example ~/mfdashboard/portfolio.json
+
+# Set correct permissions
+chmod 644 ~/mfdashboard/portfolio.json
+
+# Restart application
+sudo systemctl restart investments-dashboard
+```
+
+---
+
+### Quick Diagnostic Commands
+
+Run these to gather information for troubleshooting:
+
+```bash
+# System status
+sudo systemctl status investments-dashboard nginx
+
+# Check all listening ports
+sudo netstat -tlnp | grep LISTEN
+
+# View recent logs
+sudo journalctl -u investments-dashboard -n 100 --no-pager
+
+# Test connectivity
+curl http://localhost:8000  # Test app directly
+curl http://localhost:80    # Test through Nginx
+
+# Disk space
+df -h
+
+# Memory usage
+free -h
+
+# Process list
+ps aux | grep -E 'gunicorn|nginx'
+```
+
+---
+
 ## Need Help?
 
 ### Useful Commands Reference:
