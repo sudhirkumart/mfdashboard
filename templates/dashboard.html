@@ -1024,7 +1024,6 @@
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    alert('Transaction added successfully!');
                     // Clear form based on asset type
                     if (assetType === 'STOCK') {
                         document.getElementById('stock-symbol').value = '';
@@ -1033,12 +1032,20 @@
                         document.getElementById('stock-quantity').value = '';
                         document.getElementById('stock-price').value = '';
                         document.getElementById('stock-notes').value = '';
+
+                        alert('Stock transaction added successfully!\n\nIMPORTANT: Update the current stock price in the "Stock Prices" tab to see correct portfolio value.');
                     } else {
                         document.getElementById('selected-scheme').value = '';
                         document.getElementById('selected-scheme-code').value = '';
                         document.getElementById('mf-units').value = '';
                         document.getElementById('mf-nav').value = '';
+
+                        alert('Transaction added successfully!');
                     }
+
+                    // Reload portfolio to show the new transaction immediately
+                    loadPortfolio();
+                    loadTransactions();  // Also refresh transactions list
                 } else {
                     alert('Error: ' + data.error);
                 }
@@ -1103,6 +1110,11 @@
                     const avgPriceLabel = isStock ? 'Avg Price:' : 'Avg NAV:';
                     const currentPriceLabel = isStock ? 'Current Price:' : 'Current NAV:';
 
+                    // Warning for stocks without price
+                    const priceWarning = (isStock && h.current_nav === 0)
+                        ? '<div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 13px;"><strong>⚠️ Price Not Set:</strong> Update this stock\'s current price in the "Stock Prices" tab to see accurate portfolio value.</div>'
+                        : '';
+
                     return `
                         <div class="holding-item" data-asset-type="${h.asset_type}">
                             <h3>${h.scheme_name}${assetBadge}${exchangeTag}</h3>
@@ -1133,6 +1145,7 @@
                                     <span class="detail-value ${gainClass}">${gainSymbol}${formatCurrency(h.gain_loss)} (${gainSymbol}${h.gain_loss_percentage}%)</span>
                                 </div>
                             </div>
+                            ${priceWarning}
                         </div>
                     `;
                 }).join('');
