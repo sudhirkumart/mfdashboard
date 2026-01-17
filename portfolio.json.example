@@ -1,0 +1,41 @@
+{
+  "transactions": [
+    {
+      "date": "2024-01-15",
+      "scheme_code": 101585,
+      "scheme_name": "HDFC Equity Savings Fund - GROWTH PLAN",
+      "transaction_type": "BUY",
+      "units": 100,
+      "nav": 55.50,
+      "amount": 5550.00,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": "Initial investment"
+    },
+    {
+      "date": "2024-06-15",
+      "scheme_code": 118834,
+      "scheme_name": "SBI BlueChip Fund - GROWTH",
+      "transaction_type": "BUY",
+      "units": 50,
+      "nav": 85.25,
+      "amount": 4262.50,
+      "asset_type": "MUTUAL_FUND",
+      "exchange": "",
+      "notes": "Monthly SIP"
+    },
+    {
+      "date": "2024-01-20",
+      "scheme_code": "RELIANCE",
+      "scheme_name": "RELIANCE INDUSTRIES LTD",
+      "transaction_type": "BUY",
+      "units": 10,
+      "nav": 2450.00,
+      "amount": 24500.00,
+      "asset_type": "STOCK",
+      "exchange": "NSE",
+      "notes": "Stock purchase"
+    }
+  ],
+  "last_updated": "2024-01-01T00:00:00.000000"
+}

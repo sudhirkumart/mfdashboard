@@ -22,3 +22,19 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Sensitive data and user files
+portfolio.json
+stock_prices.json
+*.log
+
+# Deployment keys and certificates
+*.pem
+*.key
+*.crt
+*.p12
+
+# Environment variables
+.env
+.env.local
+.env.production

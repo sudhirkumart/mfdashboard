@@ -18,6 +18,11 @@ import json
 import os
 
 app = Flask(__name__)
+
+# Security: Set secret key for session management
+# In production, use environment variable: export SECRET_KEY='your-secret-key-here'
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production-use-env-variable')
+
 fetcher = MFAPIFetcher()
 portfolio = PortfolioManager()
 
