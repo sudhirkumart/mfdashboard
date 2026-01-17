@@ -38,3 +38,17 @@ stock_prices.json
 .env
 .env.local
 .env.production
+
+# Backup files
+*.backup*.json
+portfolio.backup_*.json
+
+# Test files
+test_*.json
+
+# Windows artifacts
+nul
+NUL
+
+# Claude Code local settings
+.claude/settings.local.json

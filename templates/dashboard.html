@@ -6,6 +6,54 @@
     <title>Investments Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        /* ===== CSS VARIABLES FOR THEMING ===== */
+        :root {
+            --primary-color: #667eea;
+            --primary-dark: #5568d3;
+            --secondary-color: #764ba2;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-card: #ffffff;
+            --bg-card-alt: #f8f9fa;
+            --bg-input: #ffffff;
+            --bg-tab: #f0f0f0;
+            --bg-tab-hover: #e0e0e0;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.2);
+            --positive-color: #28a745;
+            --negative-color: #dc3545;
+            --warning-bg: #fff3cd;
+            --warning-border: #ffc107;
+            --info-bg: #e7f3ff;
+        }
+
+        /* ===== DARK THEME ===== */
+        [data-theme="dark"] {
+            --primary-color: #8b9eff;
+            --primary-dark: #7a8be6;
+            --secondary-color: #9d6fd1;
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --bg-body: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --bg-card: #1e1e2f;
+            --bg-card-alt: #252538;
+            --bg-input: #2a2a3d;
+            --bg-tab: #2a2a3d;
+            --bg-tab-hover: #353548;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border-color: #3f3f50;
+            --shadow-color: rgba(0,0,0,0.4);
+            --positive-color: #4ade80;
+            --negative-color: #f87171;
+            --warning-bg: #422006;
+            --warning-border: #ca8a04;
+            --info-bg: #1e3a5f;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,10 +62,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-body);
             min-height: 100vh;
             padding: 10px;
             overflow-x: hidden;
+            transition: background 0.3s ease;
         }
 
         .container {
@@ -27,19 +76,56 @@
         }
 
         .header {
-            background: white;
+            background: var(--bg-card);
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px var(--shadow-color);
             margin-bottom: 20px;
             overflow: hidden;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .header h1 {
-            color: #667eea;
+            color: var(--primary-color);
             font-size: clamp(1.3em, 5vw, 2.5em);
             margin-bottom: 10px;
             word-wrap: break-word;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--bg-tab);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tab-hover);
+            border-color: var(--primary-color);
+        }
+
+        .theme-toggle .icon {
+            font-size: 16px;
         }
 
         .tabs {
@@ -53,7 +139,7 @@
 
         .tab {
             padding: 10px 14px;
-            background: #f0f0f0;
+            background: var(--bg-tab);
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -61,14 +147,15 @@
             transition: all 0.3s;
             white-space: nowrap;
             flex-shrink: 0;
+            color: var(--text-primary);
         }
 
         .tab:hover {
-            background: #e0e0e0;
+            background: var(--bg-tab-hover);
         }
 
         .tab.active {
-            background: #667eea;
+            background: var(--primary-color);
             color: white;
         }
 
@@ -81,18 +168,19 @@
         }
 
         .card {
-            background: white;
+            background: var(--bg-card);
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px var(--shadow-color);
             margin-bottom: 20px;
             overflow: hidden;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card h2 {
-            color: #667eea;
+            color: var(--primary-color);
             margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 10px;
             font-size: clamp(1em, 4vw, 1.5em);
             word-wrap: break-word;
@@ -106,11 +194,11 @@
         }
 
         .summary-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-gradient);
             color: white;
             padding: 15px;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px var(--shadow-color);
             word-wrap: break-word;
             overflow: hidden;
         }
@@ -140,26 +228,28 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .form-group input, .form-group select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, background 0.3s;
+            background: var(--bg-input);
+            color: var(--text-primary);
         }
 
         .form-group input:focus, .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary-color);
         }
 
         .btn {
             padding: 12px 24px;
-            background: #667eea;
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 8px;
@@ -169,7 +259,7 @@
         }
 
         .btn:hover {
-            background: #5568d3;
+            background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
@@ -183,16 +273,17 @@
         }
 
         .holding-item {
-            background: #f8f9fa;
+            background: var(--bg-card-alt);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--primary-color);
             overflow: hidden;
+            transition: background 0.3s ease;
         }
 
         .holding-item h3 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-size: clamp(0.9em, 3vw, 1.1em);
             word-wrap: break-word;
@@ -210,55 +301,57 @@
             display: flex;
             flex-direction: column;
             padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--border-color);
             gap: 4px;
         }
 
         .detail-label {
-            color: #666;
+            color: var(--text-secondary);
             font-weight: 600;
             font-size: 12px;
         }
 
         .detail-value {
-            color: #333;
+            color: var(--text-primary);
             font-weight: 500;
             font-size: 14px;
             word-break: break-word;
         }
 
         .positive {
-            color: #28a745;
+            color: var(--positive-color);
         }
 
         .negative {
-            color: #dc3545;
+            color: var(--negative-color);
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: var(--primary-color);
             font-size: 18px;
         }
 
         .search-results {
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             margin-top: 10px;
+            background: var(--bg-card);
         }
 
         .search-item {
             padding: 12px;
             cursor: pointer;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--border-color);
             transition: background 0.3s;
+            color: var(--text-primary);
         }
 
         .search-item:hover {
-            background: #f0f0f0;
+            background: var(--bg-card-alt);
         }
 
         .search-item:last-child {
@@ -283,24 +376,25 @@
             border-collapse: collapse;
             min-width: 500px;
             font-size: 13px;
+            color: var(--text-primary);
         }
 
         th, td {
             padding: 10px 8px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
 
         th {
-            background: #f8f9fa;
+            background: var(--bg-card-alt);
             font-weight: 600;
-            color: #667eea;
+            color: var(--primary-color);
             font-size: 12px;
         }
 
         tr:hover {
-            background: #f8f9fa;
+            background: var(--bg-card-alt);
         }
 
         .hidden {
@@ -318,9 +412,9 @@
 
         .filter-btn {
             padding: 8px 12px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
+            border: 2px solid var(--primary-color);
+            background: var(--bg-card);
+            color: var(--primary-color);
             border-radius: 8px;
             cursor: pointer;
             font-size: 12px;
@@ -332,11 +426,11 @@
         }
 
         .filter-btn:hover {
-            background: #f0f3ff;
+            background: var(--bg-card-alt);
         }
 
         .filter-btn.active {
-            background: #667eea;
+            background: var(--primary-color);
             color: white;
         }
 
@@ -358,18 +452,18 @@
         }
 
         .badge-mf {
-            background: #667eea;
+            background: var(--primary-color);
             color: white;
         }
 
         .exchange-tag {
             display: inline-block;
             padding: 2px 8px;
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 10px;
-            color: #666;
+            color: var(--text-secondary);
             margin-left: 8px;
         }
 
@@ -739,8 +833,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Investments Dashboard</h1>
-            <p>Track your mutual funds, stocks, and calculate capital gains</p>
+            <div class="header-top">
+                <div>
+                    <h1>Investments Dashboard</h1>
+                    <p>Track your mutual funds, stocks, and calculate capital gains</p>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+                    <span class="icon" id="theme-icon">🌙</span>
+                    <span id="theme-text">Dark</span>
+                </button>
+            </div>
 
             <div class="tabs">
                 <button class="tab active" onclick="showTab('portfolio')">Portfolio</button>
@@ -788,6 +890,14 @@
                 <h2>Portfolio Distribution</h2>
                 <div class="chart-container">
                     <canvas id="portfolioChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Performance Comparison</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 14px;">Invested amount vs Current value for each holding</p>
+                <div class="chart-container" style="height: clamp(200px, 40vw, 350px);">
+                    <canvas id="performanceChart"></canvas>
                 </div>
             </div>
 
@@ -1057,9 +1167,65 @@
 
     <script>
         let portfolioChart = null;
+        let performanceChart = null;
         let searchTimeout = null;
         let allHoldings = [];  // Store all holdings for filtering
         let currentFilter = 'all';  // Track current filter
+
+        // ===== THEME TOGGLE =====
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+
+            // Update chart colors if chart exists
+            if (portfolioChart) {
+                updateChartTheme(newTheme);
+            }
+        }
+
+        function updateThemeButton(theme) {
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+
+            if (theme === 'dark') {
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+            }
+        }
+
+        function updateChartTheme(theme) {
+            const textColor = theme === 'dark' ? '#e4e4e7' : '#333';
+            const gridColor = theme === 'dark' ? '#3f3f50' : '#e0e0e0';
+
+            if (portfolioChart) {
+                portfolioChart.options.plugins.legend.labels.color = textColor;
+                portfolioChart.update();
+            }
+
+            if (performanceChart) {
+                performanceChart.options.plugins.legend.labels.color = textColor;
+                performanceChart.options.scales.x.grid.color = gridColor;
+                performanceChart.options.scales.x.ticks.color = textColor;
+                performanceChart.options.scales.y.ticks.color = textColor;
+                performanceChart.update();
+            }
+        }
+
+        // Initialize theme on page load
+        initTheme();
 
         // Set today's date as default
         document.getElementById('txn-date').valueAsDate = new Date();
@@ -1387,6 +1553,9 @@
                 portfolioChart.destroy();
             }
 
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#e4e4e7' : '#333';
+
             portfolioChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -1404,13 +1573,111 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: {
+                                color: textColor
+                            }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
                                     return context.label + ': ' + formatCurrency(context.parsed);
                                 }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update performance chart
+            updatePerformanceChart(holdings);
+        }
+
+        function updatePerformanceChart(holdings) {
+            const ctx = document.getElementById('performanceChart');
+
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            if (holdings.length === 0) return;
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#e4e4e7' : '#333';
+            const gridColor = isDark ? '#3f3f50' : '#e0e0e0';
+
+            // Limit to top 8 holdings by current value for readability
+            const topHoldings = holdings
+                .sort((a, b) => b.current_value - a.current_value)
+                .slice(0, 8);
+
+            performanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topHoldings.map(h => h.scheme_name.substring(0, 15) + '...'),
+                    datasets: [
+                        {
+                            label: 'Invested',
+                            data: topHoldings.map(h => h.invested_amount),
+                            backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                            borderColor: '#667eea',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Current Value',
+                            data: topHoldings.map(h => h.current_value),
+                            backgroundColor: topHoldings.map(h =>
+                                h.gain_loss >= 0 ? 'rgba(74, 222, 128, 0.7)' : 'rgba(248, 113, 113, 0.7)'
+                            ),
+                            borderColor: topHoldings.map(h =>
+                                h.gain_loss >= 0 ? '#4ade80' : '#f87171'
+                            ),
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor,
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.x);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    if (value >= 100000) return '₹' + (value / 100000).toFixed(1) + 'L';
+                                    if (value >= 1000) return '₹' + (value / 1000).toFixed(0) + 'K';
+                                    return '₹' + value;
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor
                             }
                         }
                     }
